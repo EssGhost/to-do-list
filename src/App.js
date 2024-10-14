@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './index.css';
 import { FaPlus, FaTrash, FaCheck } from 'react-icons/fa'; // Importamos los iconos de Font Awesome
 
-import InstallButton from './InstallButton';
 
 function ToDoList() {
 
