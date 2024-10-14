@@ -78,7 +78,9 @@ function ToDoList() {
       </form>
 
       <h1>Bienvenido a Mi PWA</h1>
+      <button type="submit">
       <InstallButton />
+        </button>
       
     </div>
   );
