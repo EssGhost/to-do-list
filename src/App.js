@@ -76,9 +76,9 @@ function ToDoList() {
           <FaPlus /> 
         </button>
       </form>
-
-      <h1>Bienvenido a Mi PWA</h1>
+      
       <button type="submit">
+        Instalar mi PWA
       <InstallButton />
         </button>
       
