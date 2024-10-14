@@ -91,52 +91,34 @@ function ToDoList() {
     {
       id: 1,
       texto: 'Comprar leche',
-      completada: false
+      completada: false,
     },
     {
       id: 2,
       texto: 'Hacer ejercicio',
-      completada: false
+      completada: false,
     },
   ]);
 
   const [nuevaTarea, setNuevaTarea] = useState({
     texto: '',
-    completada: false
+    completada: false,
   });
 
-  const [deferredPrompt, setDeferredPrompt] = useState(null); // Estado para guardar el evento beforeinstallprompt
-  const [isInstallable, setIsInstallable] = useState(false); // Estado para manejar la visibilidad del botón de instalación
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
-    const handler = (e) => {
-      e.preventDefault(); // Evitamos que el prompt de instalación se dispare automáticamente
-      setDeferredPrompt(e); // Guardamos el evento en el estado
-      setIsInstallable(true); // Mostramos el botón de instalación
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e); // Guarda el evento para usarlo más tarde
     };
 
-    // Escuchamos el evento 'beforeinstallprompt'
-    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler); // Limpiamos el evento al desmontar el componente
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, []);
-
-  const handleInstallClick = () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt(); // Mostramos el prompt de instalación
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
-        } else {
-          console.log('User dismissed the A2HS prompt');
-        }
-        setDeferredPrompt(null); // Limpiamos el evento después de que el usuario interactúa
-        setIsInstallable(false); // Ocultamos el botón de instalación
-      });
-    }
-  };
 
   const agregarTarea = (e) => {
     e.preventDefault();
@@ -151,24 +133,40 @@ function ToDoList() {
   };
 
   const toggleCompletada = (id) => {
-    setTareas(tareas.map((tarea) => {
-      if (tarea.id === id) {
-        return { ...tarea, completada: !tarea.completada };
-      }
-      return tarea;
-    }));
+    setTareas(
+      tareas.map((tarea) => {
+        if (tarea.id === id) {
+          return { ...tarea, completada: !tarea.completada };
+        }
+        return tarea;
+      })
+    );
+  };
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt(); // Muestra el prompt de instalación
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('Usuario aceptó la instalación');
+        } else {
+          console.log('Usuario rechazó la instalación');
+        }
+        setDeferredPrompt(null); // Resetea el prompt
+      });
+    }
   };
 
   return (
     <div className="to-do-list">
       <h1>Lista de tareas</h1>
-      
+
       <ul>
         {tareas.map((tarea) => (
           <li key={tarea.id} className={tarea.completada ? 'completada' : ''}>
             <span>{tarea.texto}</span>
             <button className="eliminar" onClick={() => eliminarTarea(tarea.id)}>
-              <FaTrash /> 
+              <FaTrash />
             </button>
             <button className="completar" onClick={() => toggleCompletada(tarea.id)}>
               <FaCheck />
@@ -176,26 +174,26 @@ function ToDoList() {
           </li>
         ))}
       </ul>
-      
+
       <form onSubmit={agregarTarea}>
         <h2>Agregar tarea</h2>
         <label>
           Tarea:
-          <input 
-            type="text" 
-            value={nuevaTarea.texto} 
-            onChange={(e) => setNuevaTarea({ ...nuevaTarea, texto: e.target.value })} 
+          <input
+            type="text"
+            value={nuevaTarea.texto}
+            onChange={(e) => setNuevaTarea({ ...nuevaTarea, texto: e.target.value })}
           />
         </label>
         <button type="submit">
-          <FaPlus /> 
+          <FaPlus />
         </button>
       </form>
 
-      {/* Botón de instalación personalizado */}
-      {isInstallable && (
+      {/* Botón para instalar la aplicación */}
+      {deferredPrompt && (
         <button onClick={handleInstallClick}>
-          Instalar App
+          Instalar aplicación
         </button>
       )}
     </div>
@@ -203,4 +201,3 @@ function ToDoList() {
 }
 
 export default ToDoList;
-
