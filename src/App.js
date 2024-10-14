@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './index.css';
 import { FaPlus, FaTrash, FaCheck } from 'react-icons/fa'; // Importamos los iconos de Font Awesome
 
+import InstallButton from './InstallButton';
 
 function ToDoList() {
   const [tareas, setTareas] = useState([
@@ -22,34 +23,6 @@ function ToDoList() {
     completada: false
   });
 
-//
-const [deferredPrompt, setDeferredPrompt] = useState(null);
-const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-
-useEffect(() => {
-  const handleBeforeInstallPrompt = (e) => {
-    e.preventDefault(); // Previene que el prompt se muestre automáticamente
-    setDeferredPrompt(e); // Almacena el evento para usarlo más tarde
-    setShowInstallPrompt(true); // Muestra el botón de instalación
-  };
-
-  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-  return () => {
-    window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-  };
-}, []);
-
-const handleInstallClick = async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt(); // Muestra el prompt de instalación
-    const { outcome } = await deferredPrompt.userChoice; // Espera la elección del usuario
-    console.log(`User response to the install prompt: ${outcome}`);
-    setDeferredPrompt(null); // Reinicia el estado
-    setShowInstallPrompt(false); // Oculta el botón de instalación
-  }
-};
-//
   const agregarTarea = (e) => {
     e.preventDefault();
     const nuevaTareaId = tareas.length + 1;
@@ -103,13 +76,11 @@ const handleInstallClick = async () => {
           <FaPlus /> 
         </button>
       </form>
+
+      <h1>Bienvenido a Mi PWA</h1>
+      <InstallButton />
       
-      <h1>Bienvenido a mi PWA</h1>
-      {showInstallPrompt && (
-        <button onClick={handleInstallClick}>Instalar App</button>
-      )}
     </div>
-    
   );
 }
 
